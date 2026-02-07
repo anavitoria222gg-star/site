@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Erro na Aplicação</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 100px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        h1 {
+            color: #dc3545;
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+        .error-details {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+            text-align: left;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px;
+            font-weight: bold;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+        .btn-danger {
+            background: #dc3545;
+        }
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        .status-box {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #28a745;
+            color: white;
+            border-radius: 5px;
+            margin: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚠️ Erro na Aplicação</h1>
+        
+        <div class="status-box">
+            Status: <span th:text="${status}">500</span>
+        </div>
+        
+        <h2 th:text="${error}">Internal Server Error</h2>
+        <p th:text="${message}">Ocorreu um erro inesperado na aplicação.</p>
+        
+        <div class="error-details" th:if="${trace}">
+            <strong>Detalhes do Erro:</strong>
+            <pre th:text="${trace}">Stack trace...</pre>
+        </div>
+        
+        <div class="error-details" th:unless="${trace}">
+            <strong>Informações:</strong>
+            <p>Tempo: <span th:text="${timestamp}">...</span></p>
+            <p>Caminho: <span th:text="${path}">...</span></p>
+            <p>Método: <span th:text="${#httpServletRequest.method}">...</span></p>
+        </div>
+        
+        <div style="margin-top: 30px;">
+            <a href="/" class="btn">🏠 Voltar para Home</a>
+            <a href="/login" class="btn">🔐 Login</a>
+            <a href="/h2-console" target="_blank" class="btn-danger">🗄️ H2 Console</a>
+        </div>
+        
+        <div style="margin-top: 30px; color: #666; font-size: 0.9em;">
+            <p><strong>Dicas para resolver:</strong></p>
+            <ul style="text-align: left; display: inline-block;">
+                <li>Verifique os logs da aplicação no console</li>
+                <li>Confira se o H2 Console está acessível em <a href="/h2-console">/h2-console</a></li>
+                <li>Teste a página inicial: <a href="/">Home</a></li>
+                <li>Verifique se o banco de dados está acessível</li>
+                <li>Tente fazer login com usuários de teste</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

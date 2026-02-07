@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Acesso Negado</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 100px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        h1 {
+            color: #dc3545;
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        .icon {
+            font-size: 80px;
+            color: #dc3545;
+            margin-bottom: 20px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px;
+            font-weight: bold;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+        .btn-danger {
+            background: #dc3545;
+        }
+        .btn-danger:hover {
+            background: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">⛔</div>
+        <h1>ACESSO NEGADO</h1>
+        
+        <h2>Você não tem permissão para acessar este recurso</h2>
+        
+        <p>O acesso ao H2 Console está restrito apenas para administradores do sistema.</p>
+        <p>Se você é um administrador, faça login com uma conta de admin.</p>
+        
+        <div style="margin-top: 30px;">
+            <a href="/" class="btn">🏠 Página Inicial</a>
+            <a href="/login" class="btn">🔐 Fazer Login</a>
+            <a href="/admin/admindashboard" class="btn btn-danger">👑 Painel Admin</a>
+        </div>
+        
+        <div style="margin-top: 30px; color: #666; font-size: 0.9em;">
+            <p><strong>Erro 403:</strong> Permissão negada</p>
+            <p><strong>Recurso solicitado:</strong> H2 Database Console</p>
+            <p><strong>Permissão necessária:</strong> ROLE_ADMIN</p>
+        </div>
+    </div>
+</body>
+</html>

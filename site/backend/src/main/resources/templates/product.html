@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Produto - Moda Store</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Mesmo estilo do index.html, com ajustes para página de produto */
+        :root {
+            --color-bg-dark: #121212;
+            --color-bg-darker: #0a0a0a;
+            --color-bg-card: #1e1e1e;
+            --color-bg-card-light: #252525;
+            --color-text-primary: #ffffff;
+            --color-text-secondary: #b0b0b0;
+            --color-text-tertiary: #808080;
+            --color-accent: #6a11cb;
+            --color-accent-hover: #7d29e0;
+            --color-border: #333333;
+            --color-border-light: #404040;
+            --color-success: #10b981;
+            --color-error: #ef4444;
+            --color-warning: #f59e0b;
+            --color-fashion: #e91e63;
+            --color-fashion-light: #f48fb1;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background-color: var(--color-bg-dark);
+            color: var(--color-text-primary);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+        }
+        
+        /* Header (mesmo do index.html) */
+        .header {
+            background: var(--color-bg-card);
+            border-bottom: 1px solid var(--color-border);
+            padding: 15px 30px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--color-fashion);
+            text-decoration: none;
+        }
+        
+        /* Página de produto */
+        .product-page {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        
+        .product-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .product-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .product-images {
+            background: var(--color-bg-card);
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid var(--color-border);
+        }
+        
+        .main-image {
+            width: 100%;
+            height: 400px;
+            background: var(--color-bg-card-light);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 100px;
+            color: var(--color-text-tertiary);
+            margin-bottom: 20px;
+        }
+        
+        .thumbnail-images {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .thumbnail {
+            width: 80px;
+            height: 80px;
+            background: var(--color-bg-card-light);
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            color: var(--color-text-tertiary);
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        
+        .thumbnail:hover,
+        .thumbnail.active {
+            border-color: var(--color-fashion);
+        }
+        
+        .product-info {
+            background: var(--color-bg-card);
+            border-radius: 10px;
+            padding: 30px;
+            border: 1px solid var(--color-border);
+        }
+        
+        .product-title {
+            font-size: 32px;
+            margin-bottom: 10px;
+            color: var(--color-fashion);
+        }
+        
+        .product-price {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        
+        .product-description {
+            color: var(--color-text-secondary);
+            margin-bottom: 30px;
+            line-height: 1.8;
+        }
+        
+        .product-specs {
+            margin-bottom: 30px;
+        }
+        
+        .spec-item {
+            margin-bottom: 10px;
+            display: flex;
+        }
+        
+        .spec-label {
+            width: 120px;
+            color: var(--color-text-tertiary);
+        }
+        
+        .spec-value {
+            flex: 1;
+        }
+        
+        .size-selector {
+            margin-bottom: 30px;
+        }
+        
+        .size-title {
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .size-options {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .size-option {
+            padding: 10px 20px;
+            background: var(--color-bg-card-light);
+            border: 1px solid var(--color-border);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .size-option:hover,
+        .size-option.active {
+            background: var(--color-fashion);
+            border-color: var(--color-fashion);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn-primary, .btn-secondary {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn-primary {
+            background: var(--color-fashion);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--color-fashion-light);
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: var(--color-bg-card-light);
+            color: var(--color-text-primary);
+            border: 1px solid var(--color-border);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--color-bg-card);
+            transform: translateY(-2px);
+        }
+        
+        /* Footer (mesmo do index.html) */
+        .footer {
+            background: var(--color-bg-darker);
+            padding: 50px 20px;
+            margin-top: 60px;
+            border-top: 1px solid var(--color-border);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-tshirt"></i>
+                <span>Moda Store</span>
+            </a>
+            
+            <div class="user-menu">
+                <a href="index.html" style="color: var(--color-text-secondary); text-decoration: none; margin-right: 20px;">
+                    <i class="fas fa-arrow-left"></i> Voltar
+                </a>
+                <div class="cart-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count">3</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Produto -->
+    <main class="product-page">
+        <div class="product-container">
+            <div class="product-images">
+                <div class="main-image">
+                    <i class="fas fa-tshirt"></i>
+                </div>
+                <div class="thumbnail-images">
+                    <div class="thumbnail active">
+                        <i class="fas fa-tshirt"></i>
+                    </div>
+                    <div class="thumbnail">
+                        <i class="fas fa-tshirt"></i>
+                    </div>
+                    <div class="thumbnail">
+                        <i class="fas fa-tshirt"></i>
+                    </div>
+                    <div class="thumbnail">
+                        <i class="fas fa-tshirt"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="product-info">
+                <h1 class="product-title">Camiseta Premium</h1>
+                <div class="product-price">R$ 89,90</div>
+                
+                <p class="product-description">
+                    Camiseta 100% algodão penteado, com corte moderno e confortável. 
+                    Ideal para o dia a dia, trabalho ou lazer. Disponível em várias cores.
+                </p>
+                
+                <div class="product-specs">
+                    <div class="spec-item">
+                        <span class="spec-label">Material:</span>
+                        <span class="spec-value">100% Algodão</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Cor:</span>
+                        <span class="spec-value">Preto</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Marca:</span>
+                        <span class="spec-value">Premium Wear</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Origem:</span>
+                        <span class="spec-value">Nacional</span>
+                    </div>
+                </div>
+                
+                <div class="size-selector">
+                    <div class="size-title">Tamanho:</div>
+                    <div class="size-options">
+                        <div class="size-option active">P</div>
+                        <div class="size-option">M</div>
+                        <div class="size-option">G</div>
+                        <div class="size-option">GG</div>
+                        <div class="size-option">XG</div>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn-primary">
+                        <i class="fas fa-shopping-cart"></i>
+                        Adicionar ao Carrinho
+                    </button>
+                    <button class="btn-secondary">
+                        <i class="fas fa-heart"></i>
+                        Favoritar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div style="text-align: center; color: var(--color-text-tertiary);">
+            <p>&copy; 2024 Moda Store. Todos os direitos reservados.</p>
+            <p style="margin-top: 10px;">
+                <a href="index.html" style="color: var(--color-fashion); text-decoration: none;">
+                    Voltar para a página inicial
+                </a>
+            </p>
+        </div>
+    </footer>
+
+    <script

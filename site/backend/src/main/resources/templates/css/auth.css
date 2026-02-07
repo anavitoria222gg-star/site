@@ -1,0 +1,322 @@
+:root {
+    --color-bg-dark: #121212;
+    --color-bg-darker: #0a0a0a;
+    --color-bg-card: #1e1e1e;
+    --color-bg-card-light: #252525;
+    --color-text-primary: #ffffff;
+    --color-text-secondary: #b0b0b0;
+    --color-text-tertiary: #808080;
+    --color-accent: #6a11cb;
+    --color-accent-hover: #7d29e0;
+    --color-border: #333333;
+    --color-border-light: #404040;
+    --color-success: #10b981;
+    --color-error: #ef4444;
+    --color-warning: #f59e0b;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--color-bg-dark);
+    color: var(--color-text-primary);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    line-height: 1.6;
+}
+
+.container {
+    width: 100%;
+    max-width: 480px;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.logo-icon {
+    font-size: 28px;
+    color: var(--color-accent);
+}
+
+h1, h2 {
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    color: var(--color-text-tertiary);
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.card {
+    background-color: var(--color-bg-card);
+    border-radius: 12px;
+    padding: 40px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--color-border);
+}
+
+.form-group {
+    margin-bottom: 24px;
+}
+
+label {
+    display: block;
+    color: var(--color-text-secondary);
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.input-container {
+    position: relative;
+}
+
+input, select {
+    width: 100%;
+    background-color: var(--color-bg-card-light);
+    color: var(--color-text-primary);
+    border: 1px solid var(--color-border-light);
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-size: 15px;
+    transition: all 0.2s ease;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 2px rgba(106, 17, 203, 0.2);
+}
+
+input::placeholder {
+    color: var(--color-text-tertiary);
+}
+
+.input-icon {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-text-tertiary);
+    font-size: 16px;
+}
+
+.password-toggle {
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.password-toggle:hover {
+    color: var(--color-text-secondary);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.btn-submit {
+    width: 100%;
+    background: linear-gradient(135deg, var(--color-accent), #5a0cb3);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 16px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-submit:hover {
+    background: linear-gradient(135deg, var(--color-accent-hover), #6a11cb);
+    transform: translateY(-1px);
+    box-shadow: 0 5px 15px rgba(106, 17, 203, 0.3);
+}
+
+.btn-submit:active {
+    transform: translateY(0);
+}
+
+.btn-submit:disabled {
+    background: var(--color-border-light);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+    color: var(--color-text-tertiary);
+}
+
+.spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    display: none;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.message {
+    padding: 16px;
+    border-radius: 8px;
+    margin-top: 24px;
+    font-size: 14px;
+    display: none;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.message-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.message.success {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: var(--color-success);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    display: flex;
+}
+
+.message.error {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--color-error);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    display: flex;
+}
+
+.message.warning {
+    background-color: rgba(245, 158, 11, 0.1);
+    color: var(--color-warning);
+    border: 1px solid rgba(245, 158, 11, 0.2);
+    display: flex;
+}
+
+.footer-links {
+    text-align: center;
+    margin-top: 30px;
+    color: var(--color-text-tertiary);
+    font-size: 13px;
+}
+
+.footer-links a {
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.footer-links a:hover {
+    color: var(--color-accent);
+    text-decoration: underline;
+}
+
+.error-field {
+    border-color: var(--color-error) !important;
+}
+
+.error-text {
+    color: var(--color-error);
+    font-size: 12px;
+    margin-top: 5px;
+    display: none;
+}
+
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--color-text-secondary);
+}
+
+.checkbox-container input {
+    display: none;
+}
+
+.checkmark {
+    width: 18px;
+    height: 18px;
+    background-color: var(--color-bg-card-light);
+    border: 1px solid var(--color-border-light);
+    border-radius: 4px;
+    margin-right: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.checkbox-container input:checked + .checkmark {
+    background-color: var(--color-accent);
+    border-color: var(--color-accent);
+}
+
+.checkbox-container input:checked + .checkmark:after {
+    content: '✓';
+    color: white;
+    font-size: 12px;
+}
+
+.forgot-password {
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.2s;
+}
+
+.forgot-password:hover {
+    color: var(--color-accent);
+}
+
+@media (max-width: 520px) {
+    .card {
+        padding: 30px 24px;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+    
+    h1, h2 {
+        font-size: 24px;
+    }
+}

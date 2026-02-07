@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Home - Área do Usuário</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        .welcome-box {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border: 1px solid #c8e6c9;
+        }
+        .menu {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .menu a {
+            padding: 10px 20px;
+            background: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        .menu a:hover {
+            background: #388e3c;
+        }
+        .menu a.admin {
+            background: #ff9800;
+        }
+        .menu a.admin:hover {
+            background: #f57c00;
+        }
+        .menu a.logout {
+            background: #f44336;
+        }
+        .menu a.logout:hover {
+            background: #d32f2f;
+        }
+        .user-info {
+            background: #f1f8e9;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏠 Página Home</h1>
+        
+        <div class="welcome-box">
+            <h2>👋 Bem-vindo(a)!</h2>
+            <p>Você acessou a área protegida do sistema.</p>
+        </div>
+        
+        <div class="user-info">
+            <h3>📋 Informações da Sessão:</h3>
+            <p><strong>Usuário:</strong> <span th:text="${username}">Usuário</span></p>
+            <p><strong>Nível de acesso:</strong> 
+                <span th:if="${isAdmin}" style="color: #ff9800; font-weight: bold;">ADMINISTRADOR</span>
+                <span th:unless="${isAdmin}" style="color: #4CAF50;">USUÁRIO</span>
+            </p>
+        </div>
+        
+        <div class="menu">
+            <a href="/home">🏠 Home</a>
+            <a href="/profile">👤 Meu Perfil</a>
+            <a th:if="${isAdmin}" href="/admin/admindashboard" class="admin">👑 Painel Admin</a>
+            <a href="/dashboard">📊 Dashboard</a>
+            <a href="/logout" class="logout">🚪 Sair</a>
+        </div>
+        
+        <div style="margin-top: 30px; padding: 20px; background: #f9f9f9; border-radius: 8px;">
+            <h3>ℹ️ Sobre esta página:</h3>
+            <p>Esta é a página <strong>home</strong> que só pode ser acessada após login.</p>
+            <p>A página inicial pública é acessível em <a href="/">Página Inicial Pública</a>.</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+        .success-box {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border: 1px solid #c3e6cb;
+        }
+        .menu {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .menu a {
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        .menu a:hover {
+            background: #0056b3;
+        }
+        .menu a.dev {
+            background: #dc3545;
+        }
+        .menu a.dev:hover {
+            background: #c82333;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+            border-top: 5px solid #007bff;
+        }
+        .dev-warning {
+            background: #fff3cd;
+            color: #856404;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ffeaa7;
+            margin: 10px 0;
+            font-size: 0.9em;
+            text-align: center;
+        }
+        .password-btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: linear-gradient(45deg, #dc3545, #c82333);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(220, 53, 69, 0.2);
+            margin: 10px;
+        }
+        .password-btn:hover {
+            background: linear-gradient(45deg, #c82333, #b21f2d);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(220, 53, 69, 0.3);
+        }
+        .password-btn i {
+            margin-right: 8px;
+        }
+        .password-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 30px 0;
+            text-align: center;
+            border-left: 5px solid #dc3545;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>👑 <span th:text="${titulo}">Dashboard Admin</span></h1>
+        
+        <div class="success-box">
+            <h2>✅ SUCESSO!</h2>
+            <p><span th:text="${mensagem}">Login como admin funcionou corretamente!</span></p>
+            <p>Usuário: <strong th:text="${usuario}">Administrador</strong></p>
+        </div>
+        
+        <!-- BOTÃO PARA VER SENHAS -->
+        <div class="password-section">
+            <h2><i class="fas fa-key"></i> Acesso Rápido às Senhas</h2>
+            <p>Clique no botão abaixo para visualizar todas as senhas dos usuários em texto claro.</p>
+            
+            <a href="/admin/passwords" class="password-btn">
+                <i class="fas fa-lock-open"></i> VER SENHAS DOS USUÁRIOS (DEV)
+            </a>
+            
+            <div class="dev-warning" style="margin-top: 15px;">
+                ⚠️ <strong>Atenção:</strong> Esta funcionalidade mostra senhas em texto claro. 
+                Use apenas para desenvolvimento e testes! Nunca em produção.
+            </div>
+        </div>
+        
+        <!-- MENU PRINCIPAL -->
+        <h2>📁 Navegação</h2>
+        <div class="menu">
+            <a href="/admin/dashboard">🏠 Dashboard</a>
+            <a href="/admin/users">👥 Gerenciar Usuários</a>
+            <a href="/admin/passwords" class="dev">🔓 Ver Senhas (DEV)</a>
+            <a href="/admin/settings">⚙️ Configurações</a>
+           <a href="/admin/h2-console" target="_blank">🗄️ Banco de Dados (H2)</a>
+            <a href="/">🏡 Site Público</a>
+            <a href="/logout">🚪 Sair</a>
+        </div>
+        
+        <h2>📊 Estatísticas do Sistema</h2>
+        <div class="stats">
+            <div class="stat-card">
+                <h3>👥 Total de Usuários</h3>
+                <p style="font-size: 2em; color: #007bff;">-</p>
+                <small>Acesse o H2 Console para ver dados</small>
+            </div>
+            <div class="stat-card">
+                <h3>✅ Sistema</h3>
+                <p style="font-size: 2em; color: #28a745;">Online</p>
+                <small>Porta: 8081</small>
+            </div>
+            <div class="stat-card">
+                <h3>🛡️ Nível de Acesso</h3>
+                <p style="font-size: 2em; color: #dc3545;">ADMIN</p>
+                <small>Permissões totais</small>
+            </div>
+            <div class="stat-card">
+                <h3>🗄️ Banco</h3>
+                <p style="font-size: 2em; color: #6f42c1;">H2 Database</p>
+                <small>Arquivo: ./data/meubanco</small>
+            </div>
+        </div>
+        
+        <h2>⚡ Ações Rápidas</h2>
+        <div class="menu">
+            <a href="/register">➕ Criar Novo Usuário</a>
+            <a href="/h2-console" target="_blank">🔧 Acessar H2 Console</a>
+            <a href="/api/auth/health" target="_blank">🩺 Verificar Saúde da API</a>
+            <a href="/login">🔐 Tela de Login</a>
+        </div>
+        
+        <div style="margin-top: 40px; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+            <h3>🔍 Informações Técnicas</h3>
+            <p><strong>URL Atual:</strong> <span th:text="${currentPath}">/admin/dashboard</span></p>
+            <p><strong>Controller:</strong> AdminController.adminDashboard()</p>
+            <p><strong>Template:</strong> admin/admindashboard.html</p>
+            <p><strong>Status:</strong> <span style="color: green;">✅ Funcionando</span></p>
+        </div>
+    </div>
+    
+    <script>
+        console.log('🎉 Dashboard Admin carregado com sucesso!');
+        console.log('🔗 URL:', window.location.href);
+        console.log('👤 Usuário: Administrador');
+        console.log('🛡️ Nível: ADMIN');
+        
+        // Adiciona animação ao botão de senhas
+        document.addEventListener('DOMContentLoaded', function() {
+            const passwordBtn = document.querySelector('.password-btn');
+            if (passwordBtn) {
+                passwordBtn.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.05)';
+                });
+                passwordBtn.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1)';
+                });
+                
+                // Adiciona alerta ao clicar
+                passwordBtn.addEventListener('click', function(e) {
+                    if (!confirm('⚠️ ATENÇÃO: Você está prestes a visualizar senhas em texto claro.\n\nEsta funcionalidade é apenas para desenvolvimento.\n\nContinuar?')) {
+                        e.preventDefault();
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

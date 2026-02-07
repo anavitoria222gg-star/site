@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Gerenciar Usuários - Admin</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f8f9fa;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #007bff;
+        }
+        h1 {
+            color: #333;
+            margin: 0;
+        }
+        .menu-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        .menu-bar a {
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background 0.3s;
+        }
+        .menu-bar a:hover {
+            background: #0056b3;
+        }
+        .stats {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            display: flex;
+            gap: 30px;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #007bff;
+        }
+        .error-box {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 1px solid #f5c6cb;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+        }
+        th {
+            background: #007bff;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        tr:hover {
+            background: #f8f9fa;
+        }
+        .role-badge {
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+        .role-admin {
+            background: #dc3545;
+            color: white;
+        }
+        .role-user {
+            background: #28a745;
+            color: white;
+        }
+        .password-cell {
+            font-family: 'Courier New', monospace;
+            background: #f8f9fa;
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+            color: #e83e8c;
+            font-size: 0.9em;
+            word-break: break-all;
+            max-width: 300px;
+            cursor: pointer;
+        }
+        .password-cell:hover {
+            background: #e9ecef;
+        }
+        .actions {
+            display: flex;
+            gap: 8px;
+        }
+        .btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85em;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-view {
+            background: #17a2b8;
+            color: white;
+        }
+        .btn-edit {
+            background: #ffc107;
+            color: #212529;
+        }
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+        }
+        .search-box {
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            width: 300px;
+            margin-bottom: 20px;
+        }
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+        .footer-info {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #dee2e6;
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+        .data-source {
+            background: #e9ecef;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 10px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>👥 Gerenciamento de Usuários</h1>
+            <div>
+                <a href="/admin/admindashboard">🏠 Voltar ao Dashboard</a> | 
+                <a href="/logout">🚪 Sair</a>
+            </div>
+        </div>
+        
+        <div class="menu-bar">
+            <a href="/admin/admindashboard">Dashboard</a>
+            <a href="/admin/users" style="background: #0056b3;">Usuários</a>
+            <a href="/admin/passwords" style="background: #dc3545;">🔓 Ver Senhas (DEV)</a>
+            <a href="/admin/settings">Configurações</a>
+            <a href="/h2-console" target="_blank">Banco de Dados</a>
+            <a href="/register">Criar Usuário</a>
+            <a href="/">Site Público</a>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-value" th:text="${totalUsers != null ? totalUsers : '0'}">0</div>
+                <div>Total de Usuários</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" th:text="${#lists.size(users.?[role == 'ADMIN'])}">0</div>
+                <div>Administradores</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" th:text="${#lists.size(users.?[role == 'USER'])}">0</div>
+                <div>Usuários Comuns</div>
+            </div>
+        </div>
+        
+        <div th:if="${error}" class="error-box">
+            <strong>⚠️ Erro:</strong> <span th:text="${error}"></span>
+        </div>
+        
+        <input type="text" class="search-box" placeholder="🔍 Buscar por nome, email ou função..." 
+               onkeyup="filterTable()" id="searchInput">
+        
+        <div th:if="${users != null and not users.empty}">
+            <table id="usersTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Email</th>
+                        <th>Senha (Hash)</th>
+                        <th>Função</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="user : ${users}">
+                        <td th:text="${user.id}">1</td>
+                        <td th:text="${user.nome}">João Silva</td>
+                        <td th:text="${user.email}">joao@email.com</td>
+                        <td>
+                            <div class="password-cell" 
+                                 th:data-password="${user.senha}"
+                                 th:text="${#strings.substring(user.senha, 0, 20) + '...'}"
+                                 onclick="copyPassword(this)">
+                                ••••••••
+                            </div>
+                        </td>
+                        <td>
+                            <span th:class="${user.role == 'ADMIN' ? 'role-badge role-admin' : 'role-badge role-user'}" 
+                                  th:text="${user.role}">USER</span>
+                        </td>
+                        <td>
+                            <div class="actions">
+                                <a href="#" class="btn btn-view" 
+                                   th:data-email="${user.email}"
+                                   th:data-nome="${user.nome}"
+                                   th:data-role="${user.role}"
+                                   onclick="showUserDetails(this)">Ver</a>
+                                <a href="#" class="btn btn-edit" 
+                                   th:data-id="${user.id}"
+                                   onclick="editUser(this)">Editar</a>
+                                <a href="#" class="btn btn-delete" 
+                                   th:data-id="${user.id}"
+                                   th:data-nome="${user.nome}"
+                                   onclick="deleteUser(this)">Excluir</a>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div th:unless="${users != null and not users.empty}" class="no-data">
+            <h3>📭 Nenhum usuário encontrado</h3>
+            <p>Não há usuários cadastrados no sistema ou ocorreu um erro ao carregar.</p>
+            <a href="/register" class="btn btn-view" style="margin-top: 15px;">Criar Primeiro Usuário</a>
+        </div>
+        
+        <div class="footer-info">
+            <h4>📊 Informações Técnicas:</h4>
+            <p><strong>Fonte de dados:</strong> Banco de dados H2 (Arquivo: ./data/meubanco)</p>
+            <p><strong>Método de acesso:</strong> UsuarioRepository.findAll()</p>
+            <p><strong>Total registros:</strong> <span th:text="${totalUsers != null ? totalUsers : '0'}">0</span> usuário(s)</p>
+            
+            <div class="data-source">
+                <strong>SQL Executado:</strong><br>
+                SELECT * FROM usuarios ORDER BY id
+            </div>
+            
+            <p style="margin-top: 15px;">
+                <small>
+                    ⚠️ <strong>Aviso de segurança:</strong> As senhas são armazenadas como hash. 
+                    Nunca compartilhe estas informações.
+                </small>
+            </p>
+        </div>
+    </div>
+    
+    <script>
+        // Filtro de busca na tabela
+        function filterTable() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toLowerCase();
+            const table = document.getElementById('usersTable');
+            if (!table) return;
+            
+            const rows = table.getElementsByTagName('tr');
+            
+            for (let i = 1; i < rows.length; i++) {
+                const row = rows[i];
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(filter) ? '' : 'none';
+            }
+        }
+        
+        // Copiar senha para clipboard
+        function copyPassword(element) {
+            const password = element.dataset.password;
+            navigator.clipboard.writeText(password).then(() => {
+                alert('Hash copiado para área de transferência!');
+            }).catch(err => {
+                console.error('Erro ao copiar:', err);
+                alert('Erro ao copiar: ' + err.message);
+            });
+        }
+        
+        // Mostrar detalhes do usuário
+        function showUserDetails(element) {
+            const email = element.dataset.email;
+            const nome = element.dataset.nome;
+            const role = element.dataset.role;
+            
+            alert(
+                `👤 Detalhes do Usuário:\n\n` +
+                `Nome: ${nome}\n` +
+                `Email: ${email}\n` +
+                `Função: ${role}\n\n` +
+                `Para mais detalhes, acesse o H2 Console.`
+            );
+        }
+        
+        // Editar usuário
+        function editUser(element) {
+            const userId = element.dataset.id;
+            if (confirm(`Deseja editar o usuário ID ${userId}?`)) {
+                alert(`Redirecionando para edição do usuário ${userId}...\n\n` +
+                      `Funcionalidade em desenvolvimento.`);
+            }
+        }
+        
+        // Excluir usuário
+        function deleteUser(element) {
+            const userId = element.dataset.id;
+            const userName = element.dataset.nome;
+            
+            if (confirm(`Tem certeza que deseja excluir o usuário?\n\n` +
+                       `ID: ${userId}\n` +
+                       `Nome: ${userName}\n\n` +
+                       `Esta ação não pode ser desfeita!`)) {
+                
+                fetch(`/api/usuarios/${userId}`, {
+                    method: 'DELETE',
+                })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Usuário excluído com sucesso!');
+                        location.reload();
+                    } else {
+                        alert('Erro ao excluir usuário. Verifique se a API está disponível.');
+                    }
+                })
+                .catch(error => {
+                    alert(`Erro: ${error.message}\n\n` +
+                          `Se não houver endpoint /api/usuarios/{id}, ` +
+                          `você precisará implementá-lo.`);
+                });
+            }
+        }
+        
+        console.log('📋 Sistema de gerenciamento de usuários carregado');
+        const userRows = document.querySelectorAll('#usersTable tbody tr');
+        console.log('👤 Total de usuários:', userRows.length);
+    </script>
+</body>
+</html>
