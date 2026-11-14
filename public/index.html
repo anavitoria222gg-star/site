@@ -1,41 +1,123 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>NBA Stats</title><style>body{font-family:Arial,sans-serif;background:#0b1020;color:#fff;margin:0;padding:24px}main{max-width:900px;margin:auto}.search{display:flex;gap:8px}input{flex:1;padding:14px;border-radius:8px;border:0;font-size:16px}button{padding:14px 20px;border:0;border-radius:8px;background:#e85d04;color:#fff;font-weight:bold}#results{margin-top:24px;display:grid;gap:12px}.card{background:#151c33;padding:16px;border-radius:12px;cursor:pointer}.tag{color:#9fb3ff;font-size:12px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}.stat{background:#151c33;padding:12px;border-radius:10px}</style></head><body><main><h1>🏀 NBA Stats</h1><p>Pesquise um jogador ou time da NBA.</p><div class="search"><input id="q" placeholder="Ex.: Lakers ou Stephen Curry"><button onclick="go()">Buscar</button></div><div id="results"></div></main><script>
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NBA Stats</title>
+<style>
+:root{color-scheme:dark}*{box-sizing:border-box}
+body{font-family:Arial,sans-serif;background:#0b1020;color:#fff;margin:0}
+main{max-width:1050px;margin:auto;padding:24px}
+h1{margin-bottom:4px}.muted{color:#aab4cc}
+.search{display:flex;gap:10px;margin:24px 0}
+input{flex:1;padding:15px;border-radius:10px;border:1px solid #27304d;background:#11182c;color:#fff;font-size:16px}
+button{padding:14px 20px;border:0;border-radius:10px;background:#e85d04;color:#fff;font-weight:bold;cursor:pointer}
+button:hover{filter:brightness(1.1)}
+#results{display:grid;gap:12px}.card{background:#151c33;padding:16px;border-radius:14px;border:1px solid #222b48}
+.click{cursor:pointer}.tag{color:#9fb3ff;font-size:12px;font-weight:bold}
+.games{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+.score{font-size:22px;font-weight:bold}.teams{font-size:17px;font-weight:bold}
+.header-row{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.error{border-color:#8d3030;background:#321a22}
+</style>
+</head>
+<body>
+<main>
+  <h1>🏀 NBA Stats</h1>
+  <p class="muted">Jogos, times e busca de jogadores — dados de jogos pela Realtime Sports API.</p>
+
+  <div class="search">
+    <input id="q" placeholder="Ex.: Lakers, LeBron James ou DEN" autocomplete="off">
+    <button onclick="go()">Buscar</button>
+  </div>
+
+  <div id="results"></div>
+</main>
+
+<script>
 const r=document.querySelector('#results');
+
 async function api(url){
   const res=await fetch(url);
   const data=await res.json().catch(()=>({}));
   if(!res.ok) throw new Error(data.detail || 'Erro ao buscar dados');
   return data;
 }
+
+function escapeHtml(value=''){
+  return String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+}
+
+function gameCard(g){
+  const home=g.homeTeam||{}, away=g.awayTeam||{}, status=g.status||{};
+  const date=g.date ? new Date(g.date).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'}) : '';
+  return `<div class="card">
+    <div class="tag">${escapeHtml(status.detail||status.state||'JOGO')}</div>
+    <div class="teams">${escapeHtml(away.name||'Visitante')} ${escapeHtml(away.score??0)} × ${escapeHtml(home.score??0)} ${escapeHtml(home.name||'Casa')}</div>
+    <div class="muted">${escapeHtml(date)}</div>
+    <div class="muted">${escapeHtml((g.venue||{}).name||'')}</div>
+  </div>`;
+}
+
+async function loadGames(){
+  r.innerHTML='<div class="card">Carregando jogos da NBA...</div>';
+  try{
+    const d=await api('/api/games?limit=20');
+    r.innerHTML='<h2>Próximos jogos / jogos disponíveis</h2><div class="games">'+
+      (d.games||[]).map(gameCard).join('')+'</div>';
+  }catch(e){
+    r.innerHTML='<div class="card error">❌ '+escapeHtml(e.message)+'</div>';
+  }
+}
+
 async function go(){
   const q=document.querySelector('#q').value.trim();
-  if(!q)return;
-  r.innerHTML='Buscando...';
+  if(!q){ loadGames(); return; }
+  r.innerHTML='<div class="card">Buscando...</div>';
   try{
     const d=await api('/api/search?q='+encodeURIComponent(q));
-    r.innerHTML='';
-    (d.players||[]).forEach(p=>r.innerHTML+=`<div class="card" onclick="player(${p.id})"><span class="tag">JOGADOR</span><h3>${p.full_name}</h3></div>`);
-    (d.teams||[]).forEach(t=>r.innerHTML+=`<div class="card" onclick="team(${t.id})"><span class="tag">TIME</span><h3>${t.full_name}</h3></div>`);
-    if(!r.innerHTML)r.innerHTML='Nenhum resultado encontrado.';
-  }catch(e){r.innerHTML='<div class="card">❌ '+e.message+'</div>';}
+    let h='';
+
+    if((d.players||[]).length){
+      h+='<h2>Jogadores</h2>';
+      h+=(d.players||[]).map(p=>`<div class="card click" onclick="player(${p.id})"><span class="tag">JOGADOR</span><h3>${escapeHtml(p.full_name)}</h3></div>`).join('');
+    }
+
+    if((d.teams||[]).length){
+      h+='<h2>Times</h2>';
+      h+=(d.teams||[]).map(t=>`<div class="card click" onclick="team(${t.id})"><span class="tag">${escapeHtml(t.abbreviation||'TIME')}</span><h3>${escapeHtml(t.full_name)}</h3></div>`).join('');
+    }
+
+    if((d.games||[]).length){
+      h+='<h2>Jogos encontrados</h2><div class="games">'+d.games.map(gameCard).join('')+'</div>';
+    }
+
+    r.innerHTML=h||'<div class="card">Nenhum resultado encontrado.</div>';
+  }catch(e){
+    r.innerHTML='<div class="card error">❌ '+escapeHtml(e.message)+'</div>';
+  }
 }
+
 async function player(id){
-  r.innerHTML='Carregando jogador...';
+  r.innerHTML='<div class="card">Carregando jogador...</div>';
   try{
     const d=await api('/api/player/'+id);
-    let h='<h2>Últimos 5 jogos</h2><div class="grid">';
-    for(const[k,v]of Object.entries(d.last5_average||{}))h+=`<div class="stat"><b>${k}</b><br>${v}</div>`;
-    h+='</div>';r.innerHTML=h;
-  }catch(e){r.innerHTML='<div class="card">❌ '+e.message+'</div>';}
+    r.innerHTML=`<div class="card"><span class="tag">JOGADOR</span><h2>${escapeHtml(d.player.full_name)}</h2><p class="muted">${escapeHtml(d.message||'')}</p></div>`;
+  }catch(e){r.innerHTML='<div class="card error">❌ '+escapeHtml(e.message)+'</div>';}
 }
+
 async function team(id){
-  r.innerHTML='Carregando time...';
+  r.innerHTML='<div class="card">Carregando time...</div>';
   try{
     const d=await api('/api/team/'+id);
-    let h='<h2>🏆 Líderes do time</h2>';
-    for(const[k,list]of Object.entries(d.leaders||{})){
-      h+=`<div class="card"><h3>${k}</h3>`+list.map(x=>`<div>${x.PLAYER_NAME} — ${x[Object.keys(x).slice(-1)[0]]}</div>`).join('')+'</div>';
-    }
-    r.innerHTML=h;
-  }catch(e){r.innerHTML='<div class="card">❌ '+e.message+'</div>';}
+    let h=`<h2>${escapeHtml(d.team.full_name)} (${escapeHtml(d.team.abbreviation)})</h2>`;
+    h+='<div class="games">'+(d.games||[]).map(gameCard).join('')+'</div>';
+    r.innerHTML=h||'<div class="card">Sem jogos disponíveis.</div>';
+  }catch(e){r.innerHTML='<div class="card error">❌ '+escapeHtml(e.message)+'</div>';}
 }
-</script></body></html>
+
+document.querySelector('#q').addEventListener('keydown',e=>{if(e.key==='Enter')go()});
+loadGames();
+</script>
+</body>
+</html>
