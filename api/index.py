@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import JSONResponse
+from fastapi.responses import HTMLResponse
 from nba_api.stats.static import players, teams
 from nba_api.stats.endpoints import playergamelog, commonteamroster, leaguedashplayerstats
 import pandas as pd
@@ -21,7 +21,47 @@ def records(df):
 
 @app.get("/")
 def home():
-    return {"name":"NBA Stats API","usage":"/api/search?q=lebron"}
+    return HTMLResponse(content=`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>NBA Stats</title><style>body{font-family:Arial,sans-serif;background:#0b1020;color:#fff;margin:0;padding:24px}main{max-width:900px;margin:auto}.search{display:flex;gap:8px}input{flex:1;padding:14px;border-radius:8px;border:0;font-size:16px}button{padding:14px 20px;border:0;border-radius:8px;background:#e85d04;color:#fff;font-weight:bold}#results{margin-top:24px;display:grid;gap:12px}.card{background:#151c33;padding:16px;border-radius:12px;cursor:pointer}.tag{color:#9fb3ff;font-size:12px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}.stat{background:#151c33;padding:12px;border-radius:10px}</style></head><body><main><h1>🏀 NBA Stats</h1><p>Pesquise um jogador ou time da NBA.</p><div class="search"><input id="q" placeholder="Ex.: Lakers ou Stephen Curry"><button onclick="go()">Buscar</button></div><div id="results"></div></main><script>
+const r=document.querySelector('#results');
+async function api(url){
+  const res=await fetch(url);
+  const data=await res.json().catch(()=>({}));
+  if(!res.ok) throw new Error(data.detail || 'Erro ao buscar dados');
+  return data;
+}
+async function go(){
+  const q=document.querySelector('#q').value.trim();
+  if(!q)return;
+  r.innerHTML='Buscando...';
+  try{
+    const d=await api('/api/search?q='+encodeURIComponent(q));
+    r.innerHTML='';
+    (d.players||[]).forEach(p=>r.innerHTML+=\`<div class="card" onclick="player(${p.id})"><span class="tag">JOGADOR</span><h3>${p.full_name}</h3></div>\`);
+    (d.teams||[]).forEach(t=>r.innerHTML+=\`<div class="card" onclick="team(${t.id})"><span class="tag">TIME</span><h3>${t.full_name}</h3></div>\`);
+    if(!r.innerHTML)r.innerHTML='Nenhum resultado encontrado.';
+  }catch(e){r.innerHTML='<div class="card">❌ '+e.message+'</div>';}
+}
+async function player(id){
+  r.innerHTML='Carregando jogador...';
+  try{
+    const d=await api('/api/player/'+id);
+    let h='<h2>Últimos 5 jogos</h2><div class="grid">';
+    for(const[k,v]of Object.entries(d.last5_average||{}))h+=\`<div class="stat"><b>${k}</b><br>${v}</div>\`;
+    h+='</div>';r.innerHTML=h;
+  }catch(e){r.innerHTML='<div class="card">❌ '+e.message+'</div>';}
+}
+async function team(id){
+  r.innerHTML='Carregando time...';
+  try{
+    const d=await api('/api/team/'+id);
+    let h='<h2>🏆 Líderes do time</h2>';
+    for(const[k,list]of Object.entries(d.leaders||{})){
+      h+=\`<div class="card"><h3>${k}</h3>\`+list.map(x=>\`<div>${x.PLAYER_NAME} — ${x[Object.keys(x).slice(-1)[0]]}</div>\`).join('')+'</div>';
+    }
+    r.innerHTML=h;
+  }catch(e){r.innerHTML='<div class="card">❌ '+e.message+'</div>';}
+}
+</script></body></html>`)
 
 @app.get("/api/search")
 def search(q: str):
