@@ -87,7 +87,7 @@ def player(player_id: int):
 def team(team_id: int):
     try:
         roster=commonteamroster.CommonTeamRoster(team_id=team_id,season=SEASON).get_data_frames()[0]
-        stats=leaguedashplayerstats.LeagueDashPlayerStats(season=SEASON,per_mode_detailed="PerGame").get_data_frames()[0]
+        stats=leaguedashplayerstats.LeagueDashPlayerStats(season=SEASON, team_id_nullable=team_id, per_mode_detailed="PerGame").get_data_frames()[0]
         team_stats=stats[stats["TEAM_ID"]==team_id].copy()
         if team_stats.empty: raise HTTPException(404,"Sem estatísticas para este time")
         categories={"points":"PTS","rebounds":"REB","assists":"AST","steals":"STL","blocks":"BLK","three_pointers":"FG3M","fouls":"PF","turnovers":"TOV"}
